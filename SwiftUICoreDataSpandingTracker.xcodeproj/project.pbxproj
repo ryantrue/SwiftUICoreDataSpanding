@@ -13,6 +13,8 @@
 		94F6B29B27D8E21D00523F93 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 94F6B29A27D8E21D00523F93 /* Preview Assets.xcassets */; };
 		94F6B29D27D8E21D00523F93 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F6B29C27D8E21D00523F93 /* Persistence.swift */; };
 		94F6B2A027D8E21D00523F93 /* SwiftUICoreDataSpandingTracker.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 94F6B29E27D8E21D00523F93 /* SwiftUICoreDataSpandingTracker.xcdatamodeld */; };
+		94F6B2AA27D8E3F600523F93 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F6B2A927D8E3F600523F93 /* MainView.swift */; };
+		94F6B2AD27D9222D00523F93 /* AddCardForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94F6B2AC27D9222D00523F93 /* AddCardForm.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +25,8 @@
 		94F6B29A27D8E21D00523F93 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		94F6B29C27D8E21D00523F93 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		94F6B29F27D8E21D00523F93 /* SwiftUICoreDataSpandingTracker.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SwiftUICoreDataSpandingTracker.xcdatamodel; sourceTree = "<group>"; };
+		94F6B2A927D8E3F600523F93 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		94F6B2AC27D9222D00523F93 /* AddCardForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCardForm.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +59,7 @@
 		94F6B29227D8E21C00523F93 /* SwiftUICoreDataSpandingTracker */ = {
 			isa = PBXGroup;
 			children = (
+				94F6B2A627D8E3AC00523F93 /* Main */,
 				94F6B29327D8E21C00523F93 /* SwiftUICoreDataSpandingTrackerApp.swift */,
 				94F6B29527D8E21C00523F93 /* ContentView.swift */,
 				94F6B29727D8E21D00523F93 /* Assets.xcassets */,
@@ -71,6 +76,23 @@
 				94F6B29A27D8E21D00523F93 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		94F6B2A627D8E3AC00523F93 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				94F6B2AB27D9220400523F93 /* AddCard */,
+				94F6B2A927D8E3F600523F93 /* MainView.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		94F6B2AB27D9220400523F93 /* AddCard */ = {
+			isa = PBXGroup;
+			children = (
+				94F6B2AC27D9222D00523F93 /* AddCardForm.swift */,
+			);
+			path = AddCard;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -144,8 +166,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				94F6B29D27D8E21D00523F93 /* Persistence.swift in Sources */,
+				94F6B2AD27D9222D00523F93 /* AddCardForm.swift in Sources */,
 				94F6B2A027D8E21D00523F93 /* SwiftUICoreDataSpandingTracker.xcdatamodeld in Sources */,
 				94F6B29627D8E21C00523F93 /* ContentView.swift in Sources */,
+				94F6B2AA27D8E3F600523F93 /* MainView.swift in Sources */,
 				94F6B29427D8E21C00523F93 /* SwiftUICoreDataSpandingTrackerApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
