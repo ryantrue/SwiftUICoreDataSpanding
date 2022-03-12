@@ -10,6 +10,7 @@ import SwiftUI
 struct MainView: View {
     
     @State private var shouldPresentAddCardForm = false
+    @State private var shouldShowAddTransationForm = false
     
     @Environment(\.managedObjectContext) private var viewContext
     
@@ -33,6 +34,22 @@ struct MainView: View {
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
                     .frame(height: 280)
                     .indexViewStyle(.page(backgroundDisplayMode: .always))
+                    
+                    Text("Get started by adding your first transaction")
+                    Button {
+                        shouldShowAddTransationForm.toggle()
+                    } label: {
+                        Text("+Transation")
+                            .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 14))
+                            .background(Color(.label))
+                            .foregroundColor(Color(.systemBackground))
+                            .font(.headline)
+                            .cornerRadius(5)
+                    }
+                    .fullScreenCover(isPresented: $shouldShowAddTransationForm) {
+                        AddTransationForm()
+                    }
+                    
                 } else {
                     
                     emptyPromptMessage                }
@@ -53,7 +70,7 @@ struct MainView: View {
     }
     
     private var emptyPromptMessage: some View {
-        VStack {
+        LazyVStack {
             Text("You currently have no cards in the system")
                 .padding(.horizontal, 48)
                 .padding(.vertical)
@@ -130,7 +147,7 @@ struct MainView: View {
         }
         
         var body: some View {
-            VStack(alignment: .leading, spacing: 16) {
+            LazyVStack(alignment: .leading, spacing: 16) {
                 HStack {
                     Text(card.name ?? "")
                         .font(.system(size: 24, weight: .semibold))
@@ -150,10 +167,10 @@ struct MainView: View {
                             .default(Text("Delete Card"), action: handleDelete),
                             .cancel()])
                     }
-              
+                    
                 }
-                HStack {
-                    Image("mir")
+                LazyHStack {
+                    Image("visa")
                         .resizable()
                         .scaledToFit()
                         .frame(height: 44)
@@ -168,7 +185,7 @@ struct MainView: View {
                 
                 Text("Credit Limit: $\(card.limit)")
                 
-                HStack { Spacer()}
+                LazyHStack { Spacer()}
             }
             .foregroundColor(.white)
             .padding()
