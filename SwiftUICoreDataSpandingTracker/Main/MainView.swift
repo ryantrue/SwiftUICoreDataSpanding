@@ -10,7 +10,7 @@ import SwiftUI
 struct MainView: View {
     
     @State private var shouldPresentAddCardForm = false
-    @State private var shouldShowAddTransationForm = false
+    
     
     @Environment(\.managedObjectContext) private var viewContext
     
@@ -18,6 +18,8 @@ struct MainView: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \Card.timestamp, ascending: false)],
         animation: .default)
     private var cards: FetchedResults<Card>
+    
+    
     
     
     var body: some View {
@@ -35,20 +37,9 @@ struct MainView: View {
                     .frame(height: 280)
                     .indexViewStyle(.page(backgroundDisplayMode: .always))
                     
-                    Text("Get started by adding your first transaction")
-                    Button {
-                        shouldShowAddTransationForm.toggle()
-                    } label: {
-                        Text("+Transation")
-                            .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 14))
-                            .background(Color(.label))
-                            .foregroundColor(Color(.systemBackground))
-                            .font(.headline)
-                            .cornerRadius(5)
-                    }
-                    .fullScreenCover(isPresented: $shouldShowAddTransationForm) {
-                        AddTransationForm()
-                    }
+                   
+                    
+                    TransactionListView()
                     
                 } else {
                     
@@ -61,16 +52,15 @@ struct MainView: View {
                     }
             }
             .navigationTitle("Credit Cards")
-            .navigationBarItems(leading: HStack {
-                addItemButton
-                deletAllButton
-                
-            }, trailing: addCardButton)
+            .navigationBarItems(trailing: addCardButton)
         }
+        
     }
     
+    
+    
     private var emptyPromptMessage: some View {
-        LazyVStack {
+        VStack {
             Text("You currently have no cards in the system")
                 .padding(.horizontal, 48)
                 .padding(.vertical)
@@ -147,7 +137,7 @@ struct MainView: View {
         }
         
         var body: some View {
-            LazyVStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 16) {
                 HStack {
                     Text(card.name ?? "")
                         .font(.system(size: 24, weight: .semibold))
@@ -169,7 +159,7 @@ struct MainView: View {
                     }
                     
                 }
-                LazyHStack {
+                HStack {
                     Image("visa")
                         .resizable()
                         .scaledToFit()
@@ -185,7 +175,7 @@ struct MainView: View {
                 
                 Text("Credit Limit: $\(card.limit)")
                 
-                LazyHStack { Spacer()}
+                HStack { Spacer()}
             }
             .foregroundColor(.white)
             .padding()
@@ -230,6 +220,7 @@ struct MainView: View {
         })
     }
 }
+
 
 struct MainView_Previews: PreviewProvider {
     static var previews: some View {
