@@ -7,19 +7,23 @@
 
 import SwiftUI
 
-struct AddTransationForm: View {
+struct AddTransactionForm: View {
     
     @Environment(\.presentationMode) var presentationMode
     
     @State private var name = ""
     @State private var amount = ""
     @State private var date = Date()
+    @State private var photoData: Data?
+    
+    @State private var shouldPresentPhotoPicker = false
     
     @State private var shouldPresentPhotoPicker = false
     
     var body: some View {
         NavigationView {
             Form {
+                
                 Section(header: Text("Information")) {
                     TextField("Name", text: $name)
                     TextField("Amount", text: $amount)
@@ -62,12 +66,11 @@ struct AddTransationForm: View {
             return Coordinator(parent: self)
         }
         
-        
-        class Coordinator: NSObject,UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+        class Coordinator: NSObject, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
             
             private let parent: PhotoPickerView
             
-           init(parent: PhotoPickerView) {
+            init(parent: PhotoPickerView) {
                 self.parent = parent
             }
             
@@ -76,6 +79,7 @@ struct AddTransationForm: View {
                 let image = info[.originalImage] as? UIImage
                 let imageData = image?.jpegData(compressionQuality: 1)
                 self.parent.photoData = imageData
+                
                 picker.dismiss(animated: true)
             }
             
@@ -96,6 +100,28 @@ struct AddTransationForm: View {
         }
     }
     
+    private var saveButton: some View {
+        Button {
+            let context = PersistenceController.shared.container.viewContext
+            let transaction = CardTransaction(context: context)
+            transaction.name = self.name
+            transaction.timestamp = self.date
+            transaction.amount = Float(self.amount) ?? 0
+            transaction.photoData = self.photoData
+            
+            do {
+                try context.save()
+                presentationMode.wrappedValue.dismiss()
+            } catch let customError {
+                print("Failed to save transaction: \(customError)")
+            }
+            
+        } label: {
+            Text("Save")
+        }
+
+    }
+    
     private var cancelButton: some View {
         Button {
             presentationMode.wrappedValue.dismiss()
@@ -104,18 +130,10 @@ struct AddTransationForm: View {
         }
 
     }
-    private var saveButton: some View {
-        Button {
-            
-        } label: {
-            Text("Save")
-        }
-
-    }
 }
 
-struct AddTransationForm_Previews: PreviewProvider {
+struct AddTransactionForm_Previews: PreviewProvider {
     static var previews: some View {
-        AddTransationForm()
+        AddTransactionForm()
     }
 }
