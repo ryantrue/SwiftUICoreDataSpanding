@@ -20,44 +20,41 @@ struct MainView: View {
     
     @State private var cardSelectionIndex = 0
     
+    @State private var selctedCardHash = -1
+    
     var body: some View {
         NavigationView {
             ScrollView {
                 
                 if !cards.isEmpty {
-                    TabView(selection: $cardSelectionIndex) {
-                        ForEach(0..<cards.count) { i in
-                            let card = cards[i]
+                    TabView(selection: $selctedCardHash) {
+                        ForEach(cards) { card in
                             CreditCardView(card: card)
-                                .padding(.bottom, 50)
-                                .tag(i)
-                        }
-                        
+                                .padding(.bottom,50)
+                                .tag(card.hash)
                     }
+                }
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
                     .frame(height: 280)
                     .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
-                    
-                    if let selectedCard = cards[cardSelectionIndex] {
-                        Text(selectedCard.name ?? "")
-                        TransactionsListView(card: selectedCard)
+                    .onAppear {
+                        self.selctedCardHash = cards.first?.hash ?? -1
                     }
                     
-//                    TabView {
-//                        ForEach(cards) { card in
-//                            CreditCardView(card: card)
-//                                .padding(.bottom, 50)
-//                        }
-//                    }
-                    
-                    
+                    if let firstIndex = cards.firstIndex(where: {$0.hash == selctedCardHash}) {
+                        let card = self.cards[firstIndex]
+                        TransactionsListView(card: card)
+                    }
+                
                 } else {
                     emptyPromptMessage
                 }
                 
                 Spacer()
                     .fullScreenCover(isPresented: $shouldPresentAddCardForm, onDismiss: nil) {
-                        AddCardForm()
+                        AddCardForm(card: nil) { card in
+                            self.selctedCardHash = card.hash
+                        }
                     }
             }
             .navigationTitle("Credit Cards")
