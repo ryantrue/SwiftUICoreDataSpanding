@@ -9,13 +9,24 @@ import SwiftUI
 
 struct TransactionsListView: View {
     
+    let card: Card
+    
+    init(card: Card) {
+        self.card = card
+        
+        fetchRequest = FetchRequest<CardTransaction>(entity: CardTransaction.entity(), sortDescriptors: [
+            .init(key: "timestamp", ascending: false)], predicate: .init(format: "card == %@", self.card))
+    }
+    
     @State private var shouldShowAddTransactionForm = false
     
     @Environment(\.managedObjectContext) private var viewContext
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \CardTransaction.timestamp, ascending: false)],
-        animation: .default)
-    private var transactions: FetchedResults<CardTransaction>
+    
+    var  fetchRequest: FetchRequest<CardTransaction>
+    
+    //        sortDescriptors: [NSSortDescriptor(keyPath: \CardTransaction.timestamp, ascending: false)],
+    //        animation: .default)
+    //    private var transactions: FetchedResults<CardTransaction>
     
     var body: some View {
         VStack {
@@ -33,10 +44,10 @@ struct TransactionsListView: View {
                     .cornerRadius(5)
             }
             .fullScreenCover(isPresented: $shouldShowAddTransactionForm) {
-                AddTransactionForm()
+                AddTransactionForm(card: self.card)
             }
             
-            ForEach(transactions) { transaction in
+            ForEach(fetchRequest.wrappedValue) { transaction in
                 CardTransactionView(transaction: transaction)
             }
         }
@@ -91,10 +102,10 @@ struct CardTransactionView: View {
                             .font(.system(size: 24))
                     }.padding(EdgeInsets(top: 6, leading: 8, bottom: 4, trailing: 0))
                         .actionSheet(isPresented: $shouldPresentActionSheet) {
-                                .init(title: Text(transaction.name ?? ""), message: nil, buttons: [
-                                    .destructive(Text("Delete"), action: handleDelete),
-                                    .cancel()
-                                ])
+                            .init(title: Text(transaction.name ?? ""), message: nil, buttons: [
+                                .destructive(Text("Delete"), action: handleDelete),
+                                .cancel()
+                            ])
                         }
                     
                     Text(String(format: "$%.2f", transaction.amount ))
@@ -120,12 +131,22 @@ struct CardTransactionView: View {
 }
 
 struct TransactionsListView_Previews: PreviewProvider {
+    static let firstCard: Card? = {
+        let context = PersistenceController.shared.container.viewContext
+        let request = Card.fetchRequest()
+        request.sortDescriptors = [.init(key: "timestamp", ascending: false)]
+        return try? context.fetch(request).first
+    }()
+    
     static var previews: some View {
         let context = PersistenceController.shared.container.viewContext
         ScrollView {
-            TransactionsListView()
+            if let card = firstCard {
+                TransactionsListView(card: card)
+            }
+            
         }
         
-            .environment(\.managedObjectContext, context)
+        .environment(\.managedObjectContext, context)
     }
 }
