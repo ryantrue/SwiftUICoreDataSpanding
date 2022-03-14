@@ -21,9 +21,15 @@
     <entity name="Item" representedClassName="Item" syncable="YES" codeGenerationType="class">
         <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
+    <entity name="TransactionCategory" representedClassName="TransactionCategory" syncable="YES" codeGenerationType="class">
+        <attribute name="colorData" optional="YES" attributeType="Binary"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+    </entity>
     <elements>
         <element name="Card" positionX="-63" positionY="-9" width="128" height="164"/>
         <element name="CardTransaction" positionX="-63" positionY="45" width="128" height="104"/>
         <element name="Item" positionX="-63" positionY="-18" width="128" height="44"/>
+        <element name="TransactionCategory" positionX="-54" positionY="63" width="128" height="74"/>
     </elements>
 </model>

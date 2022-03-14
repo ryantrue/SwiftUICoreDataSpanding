@@ -28,9 +28,13 @@ struct AddTransactionForm: View {
                     TextField("Name", text: $name)
                     TextField("Amount", text: $amount)
                     DatePicker("Date", selection: $date, displayedComponents: .date)
-                    
-                    NavigationLink(destination: Text("Many").navigationTitle("New Title")) {
-                        Text("Many to many")
+                }
+                Section(header: Text("Categories")) {
+                    NavigationLink(destination:
+                                    CategoriesListView()
+                                    .navigationTitle("Categories")
+                                    .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)) {
+                        Text("Select categories")
                     }
                 }
                 
@@ -76,7 +80,7 @@ struct AddTransactionForm: View {
             func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
                 
                 let image = info[.originalImage] as? UIImage
-               let resizedImage = image?.resized(to: .init(width: 500, height: 500))
+                let resizedImage = image?.resized(to: .init(width: 500, height: 500))
                 let imageData = resizedImage?.jpegData(compressionQuality: 0.5)
                 self.parent.photoData = imageData
                 
@@ -121,7 +125,7 @@ struct AddTransactionForm: View {
         } label: {
             Text("Save")
         }
-
+        
     }
     
     private var cancelButton: some View {
@@ -130,7 +134,7 @@ struct AddTransactionForm: View {
         } label: {
             Text("Cancel")
         }
-
+        
     }
 }
 
