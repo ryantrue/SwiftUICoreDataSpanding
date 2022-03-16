@@ -6,6 +6,7 @@
 //
 
 import CoreData
+import UIKit
 
 struct PersistenceController {
     static let shared = PersistenceController()
@@ -52,5 +53,26 @@ struct PersistenceController {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         })
+        
+        seedInitialData()
     }
+    private func seedInitialData() {
+        if UserDefaults.standard.bool(forKey: Self.hasSeededDataKey) {
+            return
+        }
+        let context = container.viewContext
+        
+        let category = TransactionCategory(context: context)
+        category.name = "Office Suplies"
+        category.colorData = UIColor.blue.encode()
+        category.timestamp = Date()
+        
+        do {
+            try context.save()
+            UserDefaults.standard.set(true,forKey: Self.hasSeededDataKey)
+        } catch {
+            debugPrint("Failed to seed initial data", error)
+        }
+    }
+    static let hasSeededDataKey = "hasSeededDataKey"
 }
