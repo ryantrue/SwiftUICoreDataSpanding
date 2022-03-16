@@ -56,14 +56,14 @@
 			path = Utils;
 			sourceTree = "<group>";
 		};
-		94829B0E27DAEA63003B10EF /* AddTransation */ = {
+		94829B0E27DAEA63003B10EF /* Transation */ = {
 			isa = PBXGroup;
 			children = (
 				94829B0F27DAEA90003B10EF /* AddTransationForm.swift */,
 				94E9BDA927DDA57400F8588F /* TransactionsListView.swift */,
 				946D4EBC27DED02300176C98 /* CategoriesListView.swift */,
 			);
-			path = AddTransation;
+			path = Transation;
 			sourceTree = "<group>";
 		};
 		94F6B28727D8E21B00523F93 = {
@@ -108,7 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				9462FFD827E1957600FBE086 /* Utils */,
-				94829B0E27DAEA63003B10EF /* AddTransation */,
+				94829B0E27DAEA63003B10EF /* Transation */,
 				94F6B2AB27D9220400523F93 /* AddCard */,
 				94F6B2A927D8E3F600523F93 /* MainView.swift */,
 			);
