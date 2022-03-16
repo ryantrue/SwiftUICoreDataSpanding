@@ -53,13 +53,13 @@ struct TransactionsListView: View {
                     addTransactionButton
                     filterButton
                         .sheet(isPresented: $shouldShowFilterSheet) {
-                            FilterSheet { categoriew in
-                                // add filtering
+                            FilterSheet(selectedCategories: self.selectedCategories) { categories in
+                                self.selectedCategories = categories
                             }
                         }
                 }.padding(.horizontal)
                 
-                ForEach(fetchRequest.wrappedValue) { transaction in
+                ForEach(filterTransactions(selectedCategories: self.selectedCategories)) { transaction in
                     CardTransactionView(transaction: transaction)
                 }
             }
@@ -68,6 +68,35 @@ struct TransactionsListView: View {
             AddTransactionForm(card: self.card)
         }
     }
+    
+    @State var selectedCategories = Set<TransactionCategory>()
+    
+    private func filterTransactions(selectedCategories: Set<TransactionCategory>) -> [CardTransaction] {
+        if selectedCategories.isEmpty {
+            return Array(fetchRequest.wrappedValue)
+        }
+        
+        //fetchRequest.wrappedValue: n transactions
+        // selectedCategories: m categories
+        // n x m
+        // fine if your n and m value are small
+        
+        return fetchRequest.wrappedValue.filter { transition in
+            var shoulKeep = false
+            
+            if let categories = transition.categories as? Set<TransactionCategory> {
+                categories.forEach({category in
+                    if selectedCategories.contains(category) {
+                            shoulKeep = true
+                        }
+            })
+            
+                
+            }
+                return shoulKeep
+        }
+    }
+    
     private var addTransactionButton: some View {
         Button {
             shouldShowAddTransactionForm.toggle()
@@ -105,6 +134,7 @@ struct TransactionsListView: View {
 
 struct FilterSheet: View {
     
+    @State var selectedCategories : Set<TransactionCategory>
     let didSaveFilters: (Set<TransactionCategory>) -> ()
     
     @Environment(\.managedObjectContext) private var viewContext
@@ -115,7 +145,7 @@ struct FilterSheet: View {
     
     private var categories: FetchedResults<TransactionCategory>
     
-    @State var selectedCategories = Set<TransactionCategory>()
+//    @State var selectedCategories = Set<TransactionCategory>()
     
     var body: some View {
         NavigationView {
@@ -265,11 +295,13 @@ struct CardTransactionView: View {
         }
         .foregroundColor(Color(.label))
         .padding()
-        .background(Color.white)
+//        .background(colorSheme == .dark ? Color.gray : .white)
+        .background(Color("cardTransactionBackground"))
         .cornerRadius(5)
         .shadow(radius: 5)
         .padding()
     }
+    @Environment(\.colorScheme) var colorSheme
 }
 
 struct TransactionsListView_Previews: PreviewProvider {
@@ -282,13 +314,15 @@ struct TransactionsListView_Previews: PreviewProvider {
     
     static var previews: some View {
         let context = PersistenceController.shared.container.viewContext
-        ScrollView {
-            if let card = firstCard {
-                TransactionsListView(card: card)
+        NavigationView {
+            ScrollView {
+                if let card = firstCard {
+                    TransactionsListView(card: card)
+                }
+                
             }
-            
         }
-        
+        .colorScheme(.dark)
         .environment(\.managedObjectContext, context)
     }
 }
