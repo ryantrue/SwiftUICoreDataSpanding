@@ -11,6 +11,27 @@ struct AddTransactionForm: View {
     
     let card: Card
     
+    init(card: Card) {
+        self.card = card
+        
+        let context = PersistenceController.shared.container.viewContext
+        
+        let request = TransactionCategory.fetchRequest()
+        request.sortDescriptors = [.init(key: "timestamp", ascending: false)]
+        do {
+            let result = try context.fetch(request)
+            if let first = result.first {
+//                selectedCategories.insert(first)
+                self._selectedCategories = .init(initialValue: [first])
+            }
+            
+        } catch {
+            debugPrint("Failed to preselect categories", error)
+        }
+        
+    }
+    
+    
     @Environment(\.presentationMode) var presentationMode
     
     @State private var name = ""

@@ -19,6 +19,7 @@ struct TransactionsListView: View {
     }
     
     @State private var shouldShowAddTransactionForm = false
+    @State private var shouldShowFilterSheet = false
     
     @Environment(\.managedObjectContext) private var viewContext
     
@@ -31,26 +32,138 @@ struct TransactionsListView: View {
     var body: some View {
         VStack {
             
-            Text("Get started by adding your first transaction")
-            
-            Button {
-                shouldShowAddTransactionForm.toggle()
-            } label: {
-                Text("+ Transaction")
-                    .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 14))
-                    .background(Color(.label))
-                    .foregroundColor(Color(.systemBackground))
-                    .font(.headline)
-                    .cornerRadius(5)
-            }
-            .fullScreenCover(isPresented: $shouldShowAddTransactionForm) {
-                AddTransactionForm(card: self.card)
-            }
-            
-            ForEach(fetchRequest.wrappedValue) { transaction in
-                CardTransactionView(transaction: transaction)
+            if fetchRequest.wrappedValue.isEmpty {
+                Text("Get started by adding your first transaction")
+                
+                
+                Button {
+                    shouldShowAddTransactionForm.toggle()
+                } label: {
+                    Text("+ Transaction")
+                        .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 14))
+                        .background(Color(.label))
+                        .foregroundColor(Color(.systemBackground))
+                        .font(.headline)
+                        .cornerRadius(5)
+                    
+                }
+            } else {
+                HStack {
+                    Spacer()
+                    addTransactionButton
+                    filterButton
+                        .sheet(isPresented: $shouldShowFilterSheet) {
+                            FilterSheet { categoriew in
+                                // add filtering
+                            }
+                        }
+                }.padding(.horizontal)
+                
+                ForEach(fetchRequest.wrappedValue) { transaction in
+                    CardTransactionView(transaction: transaction)
+                }
             }
         }
+        .fullScreenCover(isPresented: $shouldShowAddTransactionForm) {
+            AddTransactionForm(card: self.card)
+        }
+    }
+    private var addTransactionButton: some View {
+        Button {
+            shouldShowAddTransactionForm.toggle()
+        } label: {
+            Text("+ Transaction")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundColor(Color(.systemBackground))
+                .padding(.horizontal, 8)
+                .padding(.vertical, 6)
+                .background(Color(.label))
+                .cornerRadius(5)
+            
+        }
+        
+    }
+    private var filterButton: some View {
+        Button {
+            shouldShowFilterSheet.toggle()
+        } label: {
+            HStack {
+                Image(systemName: "line.horizontal.3.decrease.circle")
+                Text("Filter")
+            }
+            .font(.system(size: 16, weight: .semibold))
+            .foregroundColor(Color(.systemBackground))
+            .padding(.horizontal, 8)
+            .padding(.vertical, 6)
+            .background(Color(.label))
+            .cornerRadius(5)
+            
+        }
+        
+    }
+}
+
+struct FilterSheet: View {
+    
+    let didSaveFilters: (Set<TransactionCategory>) -> ()
+    
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \TransactionCategory.timestamp, ascending: false)],
+        animation: .default)
+    
+    private var categories: FetchedResults<TransactionCategory>
+    
+    @State var selectedCategories = Set<TransactionCategory>()
+    
+    var body: some View {
+        NavigationView {
+            Form {
+                ForEach(categories) { category in
+                    Button {
+                        if selectedCategories.contains(category) {
+                            selectedCategories.remove( category)
+                        } else {
+                            selectedCategories.insert(category)
+                        }
+                    } label: {
+                        HStack(spacing: 12) {
+                            if let data = category.colorData, let uiColor = UIColor.color(data: data) {
+                                let color = Color(uiColor)
+                                Spacer()
+                                    .frame(width: 30, height: 10)
+                                    .background(color)
+                            }
+                            Text(category.name ?? "")
+                                .foregroundColor(Color(.label))
+                            Spacer()
+                            
+                            if selectedCategories.contains(category) {
+                                Image(systemName: "checkmark")
+                            }
+                            
+                        }
+                    }
+                    
+                }
+                
+            }.navigationTitle("Select filters")
+                .navigationBarItems(trailing: saveButton)
+        }
+    }
+    
+    @Environment(\.presentationMode) var presentationMode
+    
+    private var saveButton: some View {
+        Button {
+            didSaveFilters(selectedCategories)
+            presentationMode.wrappedValue.dismiss()
+           
+        } label: {
+            Text("Save")
+        }
+        
     }
 }
 
@@ -115,7 +228,7 @@ struct CardTransactionView: View {
             }
             
             if let categories = transaction.categories as? Set<TransactionCategory> {
-//                let array = Array(categories)
+                //                let array = Array(categories)
                 
                 let sortedByTimestampCategories = Array(categories).sorted(by:  {$0.timestamp?.compare($1.timestamp ?? Date()) == .orderedDescending })
                 
