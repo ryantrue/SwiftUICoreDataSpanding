@@ -296,7 +296,7 @@ struct CardTransactionView: View {
         .foregroundColor(Color(.label))
         .padding()
 //        .background(colorSheme == .dark ? Color.gray : .white)
-        .background(Color("cardTransactionBackground"))
+        .background(Color.cardTransactionBackground)
         .cornerRadius(5)
         .shadow(radius: 5)
         .padding()
